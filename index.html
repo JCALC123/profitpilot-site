@@ -117,6 +117,11 @@
       color: rgba(255,210,210,.95);
       font-size:13px;
     }
+    .toast.ok{
+      border:1px solid rgba(80,255,180,.25);
+      background: rgba(80,255,180,.08);
+      color: rgba(210,255,235,.95);
+    }
 
     @media (max-width: 980px){
       .hero{grid-template-columns:1fr; }
@@ -188,7 +193,7 @@
           <span class="pill">Takes ~2 minutes</span>
         </div>
 
-        <p class="help">Fill this in, then you’ll be sent to Stripe to complete checkout.</p>
+        <p class="help">Submit this form → we capture it in Airtable → then you’ll be sent to Stripe.</p>
 
         <form id="leadForm">
           <div class="row2">
@@ -219,25 +224,17 @@
           </div>
 
           <div>
-            <label for="file">Upload CSV (optional)</label>
-            <input id="file" name="file" type="file" accept=".csv" />
-            <div class="help">Tip: Use a bank export CSV or P&L export. (File storage requires backend later.)</div>
-          </div>
-
-          <div>
             <label for="notes">Anything we should know? (optional)</label>
             <textarea id="notes" name="notes" rows="3" placeholder="e.g. Cashflow issues, slow payers, seasonal revenue…"></textarea>
           </div>
 
-          <button class="btn primary" type="submit">Continue to Secure Checkout</button>
+          <button class="btn primary" type="submit" id="submitBtn">Continue to Secure Checkout</button>
           <div id="toast" class="toast"></div>
         </form>
 
         <div class="divider"></div>
 
-        <div class="help">
-          Prefer to go straight to pricing?
-        </div>
+        <div class="help">Prefer to go straight to pricing?</div>
         <div class="ctaRow" style="margin-top:10px">
           <a class="btn" href="https://buy.stripe.com/00w7sNfFudnJ8nC3oi6Zy01" target="_blank" rel="noopener">Starter</a>
           <a class="btn" href="https://buy.stripe.com/eVq8wR1OEcjF0Va6Au6Zy00" target="_blank" rel="noopener">Pro</a>
@@ -253,9 +250,7 @@
     <section id="pricing" class="pricing">
       <div class="card">
         <h2 style="margin:0 0 8px;font-size:22px">Pricing</h2>
-        <p class="sub" style="margin:0">
-          Choose a plan. You can upgrade or downgrade anytime.
-        </p>
+        <p class="sub" style="margin:0">Choose a plan. You can upgrade or downgrade anytime.</p>
 
         <div class="pricingGrid">
           <div class="card plan">
@@ -277,7 +272,7 @@
             <h3>Pro</h3>
             <div class="price">$149<span style="font-size:14px;font-weight:700;color:var(--muted)">/mo</span></div>
             <ul class="ul">
-              <li>CSV uploads</li>
+              <li>CSV uploads (coming next)</li>
               <li>Trend & anomaly detection</li>
               <li>Cashflow risk alerts</li>
               <li>Monthly re-analysis</li>
@@ -310,7 +305,10 @@
   </div>
 
   <script>
-    // Stripe Payment Links (yours)
+    // 1) PUT YOUR MAKE WEBHOOK URL HERE (Make -> Webhooks -> Custom webhook -> copy URL)
+    const MAKE_WEBHOOK_URL = "PASTE_YOUR_MAKE_WEBHOOK_URL_HERE";
+
+    // Stripe Payment Links (your real links)
     const STRIPE_LINKS = {
       starter: "https://buy.stripe.com/00w7sNfFudnJ8nC3oi6Zy01",
       pro:     "https://buy.stripe.com/eVq8wR1OEcjF0Va6Au6Zy00",
@@ -321,35 +319,57 @@
 
     const form = document.getElementById("leadForm");
     const toast = document.getElementById("toast");
+    const submitBtn = document.getElementById("submitBtn");
 
-    function showError(msg){
+    function showToast(msg, ok=false){
       toast.textContent = msg;
+      toast.className = ok ? "toast ok" : "toast";
       toast.style.display = "block";
       setTimeout(()=>{ toast.style.display="none"; }, 4500);
     }
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim();
       const plan = document.getElementById("plan").value;
-
-      if(!email) return showError("Enter your email.");
-      if(!plan || !STRIPE_LINKS[plan]) return showError("Select a plan.");
-
-      // OPTIONAL: capture lead data somewhere later (Airtable/Make/Apps Script).
-      // Static sites cannot store files. We redirect to Stripe now.
-
-      // Prefill email in Stripe Payment Link
-      const redirectUrl = new URL(STRIPE_LINKS[plan]);
-      redirectUrl.searchParams.set("prefilled_email", email);
-
-      // (Optional tracking fields you can use later)
       const businessType = document.getElementById("businessType").value.trim();
       const revenue = document.getElementById("revenue").value.trim();
-      if (businessType) redirectUrl.searchParams.set("client_reference_id", businessType.slice(0, 50));
-      if (revenue) redirectUrl.searchParams.set("ref", revenue);
+      const notes = document.getElementById("notes").value.trim();
 
+      if(!email) return showToast("Enter your email.");
+      if(!plan || !STRIPE_LINKS[plan]) return showToast("Select a plan.");
+      if(!MAKE_WEBHOOK_URL || MAKE_WEBHOOK_URL.includes("PASTE_YOUR_MAKE_WEBHOOK_URL_HERE")) {
+        return showToast("Make webhook URL not set yet.");
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Saving…";
+
+      // Send to Make -> Airtable (automation)
+      try {
+        await fetch(MAKE_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            plan,
+            businessType,
+            revenue,
+            notes,
+            source: "profitpilot-site",
+            submittedAt: new Date().toISOString()
+          })
+        });
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Continue to Secure Checkout";
+        return showToast("Could not save details. Try again.");
+      }
+
+      // Redirect to Stripe (prefill email)
+      const redirectUrl = new URL(STRIPE_LINKS[plan]);
+      redirectUrl.searchParams.set("prefilled_email", email);
       window.location.href = redirectUrl.toString();
     });
   </script>

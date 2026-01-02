@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ProfitPilot AI — Instant Profit & Cashflow Analysis</title>
+  <meta name="description" content="Upload your numbers. Get profit clarity in minutes. Monthly AI insights. No fluff." />
+  <style>
+    :root{
+      --bg:#0b0f19; --card:#121a2a; --muted:#92a2c6; --text:#eaf0ff;
+      --accent:#6aa9ff; --accent2:#8b5cf6; --line:rgba(255,255,255,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1000px 600px at 20% 10%, rgba(106,169,255,.18), transparent 50%),
+                  radial-gradient(900px 550px at 80% 20%, rgba(139,92,246,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1120px;margin:0 auto;padding:28px 18px 70px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+    .logo{
+      width:34px;height:34px;border-radius:10px;
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow: 0 12px 30px rgba(106,169,255,.25);
+    }
+    .nav{display:flex;gap:12px;align-items:center}
+    .nav a{opacity:.9;text-decoration:none;font-weight:600}
+    .nav a:hover{opacity:1}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:12px 14px;border-radius:14px;
+      text-decoration:none;font-weight:750;
+      transition: transform .08s ease, background .2s ease;
+      cursor:pointer;
+    }
+    .btn:hover{background: rgba(255,255,255,.07)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border:0;
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow: 0 14px 38px rgba(106,169,255,.18);
+      padding:12px 16px;
+    }
+    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch;margin-top:12px}
+    .card{
+      background: rgba(18,26,42,.84);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding:22px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    h1{margin:0 0 12px;font-size:44px;letter-spacing:-.8px;line-height:1.05}
+    .sub{color:var(--muted);font-size:16px;max-width:62ch}
+    .pillrow{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0}
+    .pill{
+      font-size:13px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:8px 10px;border-radius:999px;color:rgba(234,240,255,.92);
+    }
+    .ctaRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .mini{color:var(--muted);font-size:12px;margin-top:10px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+    .step h3{margin:0 0 6px;font-size:15px}
+    .step p{margin:0;color:var(--muted);font-size:13px}
+    .pricing{margin-top:18px}
+    .pricingGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px}
+    .plan{position:relative;overflow:hidden}
+    .tag{
+      position:absolute;top:14px;right:14px;
+      font-size:12px;font-weight:800;
+      padding:6px 10px;border-radius:999px;
+      background: rgba(106,169,255,.14);
+      border:1px solid rgba(106,169,255,.25);
+    }
+    .plan h3{margin:0 0 6px;font-size:18px}
+    .price{font-size:34px;font-weight:900;margin:10px 0 12px}
+    .ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+    .ul li{margin:8px 0}
+    .formTitle{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .formTitle h2{margin:0;font-size:20px}
+    form{margin-top:12px;display:grid;gap:12px}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{font-size:12px;color:var(--muted);font-weight:700}
+    input, select, textarea{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      outline:none;
+    }
+    input::placeholder, textarea::placeholder{color:rgba(146,162,198,.7)}
+    input[type="file"]{padding:10px}
+    .help{font-size:12px;color:var(--muted);margin-top:-6px}
+    .divider{height:1px;background:var(--line);margin:14px 0}
+    footer{margin-top:18px;color:var(--muted);font-size:12px}
+    .toast{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,80,80,.25);
+      background: rgba(255,80,80,.08);
+      color: rgba(255,210,210,.95);
+      font-size:13px;
+    }
+
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr; }
+      h1{font-size:38px}
+      .grid3,.pricingGrid{grid-template-columns:1fr}
+      .row2{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:flex-start}
+      .nav{width:100%;justify-content:space-between}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>ProfitPilot AI</div>
+      </div>
+      <nav class="nav">
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a class="btn primary" href="#analyse">Analyse My Business</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="card">
+        <h1>Your Business Makes Money.<br/>So Why Does Cash Still Feel Tight?</h1>
+        <p class="sub">
+          ProfitPilot AI analyses your numbers and shows you exactly how to increase profit and cashflow —
+          automatically, every month. No fluff. No generic advice.
+        </p>
+
+        <div class="pillrow">
+          <span class="pill">2-minute AI analysis</span>
+          <span class="pill">Profit leaks + actions</span>
+          <span class="pill">Monthly alerts</span>
+          <span class="pill">Built for real SMEs</span>
+        </div>
+
+        <div class="ctaRow">
+          <a class="btn primary" href="#analyse">Analyse My Business</a>
+          <a class="btn" href="#pricing">View Pricing</a>
+        </div>
+
+        <div class="mini">
+          General business insights only — not financial, tax, or legal advice.
+        </div>
+
+        <div id="how" class="grid3">
+          <div class="card step">
+            <h3>1) Upload your numbers</h3>
+            <p>CSV from accounting/bank exports (or enter basics).</p>
+          </div>
+          <div class="card step">
+            <h3>2) Get a clear report</h3>
+            <p>Profit leaks, cashflow risks, and ranked actions.</p>
+          </div>
+          <div class="card step">
+            <h3>3) Improve monthly</h3>
+            <p>Automated re-checks and alerts each month.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="formTitle">
+          <h2 id="analyse">Instant Analysis</h2>
+          <span class="pill">Takes ~2 minutes</span>
+        </div>
+
+        <p class="help">Fill this in, then you’ll be sent to Stripe to complete checkout.</p>
+
+        <form id="leadForm">
+          <div class="row2">
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@business.com" required />
+            </div>
+            <div>
+              <label for="plan">Plan</label>
+              <select id="plan" name="plan" required>
+                <option value="" selected disabled>Select a plan…</option>
+                <option value="starter">Starter ($49/mo)</option>
+                <option value="pro">Pro ($149/mo)</option>
+                <option value="elite">Elite ($299/mo)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div>
+              <label for="businessType">Business Type</label>
+              <input id="businessType" name="businessType" type="text" placeholder="e.g. Electrical contractor" />
+            </div>
+            <div>
+              <label for="revenue">Last 12 months revenue (approx)</label>
+              <input id="revenue" name="revenue" type="number" min="0" step="1000" placeholder="e.g. 350000" />
+            </div>
+          </div>
+
+          <div>
+            <label for="file">Upload CSV (optional)</label>
+            <input id="file" name="file" type="file" accept=".csv" />
+            <div class="help">Tip: Use a bank export CSV or P&L export. (File storage requires backend later.)</div>
+          </div>
+
+          <div>
+            <label for="notes">Anything we should know? (optional)</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="e.g. Cashflow issues, slow payers, seasonal revenue…"></textarea>
+          </div>
+
+          <button class="btn primary" type="submit">Continue to Secure Checkout</button>
+          <div id="toast" class="toast"></div>
+        </form>
+
+        <div class="divider"></div>
+
+        <div class="help">
+          Prefer to go straight to pricing?
+        </div>
+        <div class="ctaRow" style="margin-top:10px">
+          <a class="btn" href="https://buy.stripe.com/00w7sNfFudnJ8nC3oi6Zy01" target="_blank" rel="noopener">Starter</a>
+          <a class="btn" href="https://buy.stripe.com/eVq8wR1OEcjF0Va6Au6Zy00" target="_blank" rel="noopener">Pro</a>
+          <a class="btn" href="https://buy.stripe.com/fZu9AV50Q6Zl47m0c66Zy02" target="_blank" rel="noopener">Elite</a>
+        </div>
+
+        <footer>
+          © <span id="year"></span> ProfitPilot AI. All rights reserved.
+        </footer>
+      </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+      <div class="card">
+        <h2 style="margin:0 0 8px;font-size:22px">Pricing</h2>
+        <p class="sub" style="margin:0">
+          Choose a plan. You can upgrade or downgrade anytime.
+        </p>
+
+        <div class="pricingGrid">
+          <div class="card plan">
+            <div class="tag">MVP</div>
+            <h3>Starter</h3>
+            <div class="price">$49<span style="font-size:14px;font-weight:700;color:var(--muted)">/mo</span></div>
+            <ul class="ul">
+              <li>Manual inputs</li>
+              <li>Basic profit leak detection</li>
+              <li>Priority actions</li>
+              <li>Email summary</li>
+            </ul>
+            <div class="divider"></div>
+            <a class="btn primary" href="https://buy.stripe.com/00w7sNfFudnJ8nC3oi6Zy01" target="_blank" rel="noopener">Choose Starter</a>
+          </div>
+
+          <div class="card plan" style="border-color:rgba(106,169,255,.25)">
+            <div class="tag" style="background:rgba(139,92,246,.14);border-color:rgba(139,92,246,.25)">Best value</div>
+            <h3>Pro</h3>
+            <div class="price">$149<span style="font-size:14px;font-weight:700;color:var(--muted)">/mo</span></div>
+            <ul class="ul">
+              <li>CSV uploads</li>
+              <li>Trend & anomaly detection</li>
+              <li>Cashflow risk alerts</li>
+              <li>Monthly re-analysis</li>
+            </ul>
+            <div class="divider"></div>
+            <a class="btn primary" href="https://buy.stripe.com/eVq8wR1OEcjF0Va6Au6Zy00" target="_blank" rel="noopener">Choose Pro</a>
+          </div>
+
+          <div class="card plan">
+            <div class="tag">Power</div>
+            <h3>Elite</h3>
+            <div class="price">$299<span style="font-size:14px;font-weight:700;color:var(--muted)">/mo</span></div>
+            <ul class="ul">
+              <li>Deeper benchmarks</li>
+              <li>Optimisation priorities</li>
+              <li>Sharper impact estimates</li>
+              <li>Advanced insights</li>
+            </ul>
+            <div class="divider"></div>
+            <a class="btn primary" href="https://buy.stripe.com/fZu9AV50Q6Zl47m0c66Zy02" target="_blank" rel="noopener">Choose Elite</a>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div style="color:var(--muted);font-size:12px">
+          Disclaimer: This tool provides general business insights only and does not constitute financial, tax, or legal advice.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Stripe Payment Links (yours)
+    const STRIPE_LINKS = {
+      starter: "https://buy.stripe.com/00w7sNfFudnJ8nC3oi6Zy01",
+      pro:     "https://buy.stripe.com/eVq8wR1OEcjF0Va6Au6Zy00",
+      elite:   "https://buy.stripe.com/fZu9AV50Q6Zl47m0c66Zy02"
+    };
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const form = document.getElementById("leadForm");
+    const toast = document.getElementById("toast");
+
+    function showError(msg){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(()=>{ toast.style.display="none"; }, 4500);
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const plan = document.getElementById("plan").value;
+
+      if(!email) return showError("Enter your email.");
+      if(!plan || !STRIPE_LINKS[plan]) return showError("Select a plan.");
+
+      // OPTIONAL: capture lead data somewhere later (Airtable/Make/Apps Script).
+      // Static sites cannot store files. We redirect to Stripe now.
+
+      // Prefill email in Stripe Payment Link
+      const redirectUrl = new URL(STRIPE_LINKS[plan]);
+      redirectUrl.searchParams.set("prefilled_email", email);
+
+      // (Optional tracking fields you can use later)
+      const businessType = document.getElementById("businessType").value.trim();
+      const revenue = document.getElementById("revenue").value.trim();
+      if (businessType) redirectUrl.searchParams.set("client_reference_id", businessType.slice(0, 50));
+      if (revenue) redirectUrl.searchParams.set("ref", revenue);
+
+      window.location.href = redirectUrl.toString();
+    });
+  </script>
+</body>
+</html>
